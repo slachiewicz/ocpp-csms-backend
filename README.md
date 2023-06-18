@@ -27,6 +27,8 @@ And vice versa with operations initiated by UI. The user sends data into the man
 as a task and puts it into the queue. All charge point services consume the task and further actions happen 
 as described before.
 
+Stack: python3.11, FastAPI, Rabbitmq, Postgresql, Sqlachemy, MongoDB, Docker, Docker-Compose, Vue3/Vuetify3.
+
 ![Screenshot](https://github.com/heroyooki/ocpp-csms/assets/17108549/4ab76f0c-07b4-4d7d-a7a3-06573bfc2199)
 
 
