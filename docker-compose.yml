@@ -1,0 +1,70 @@
+version: "3.0"
+
+services:
+  # charge point service
+  # management systen
+  # queue
+  # db
+  rabbitmq:
+    image: rabbitmq:3.12.0-management
+    container_name: csms-rabbitmq
+    volumes:
+      - ./src:/usr/src/csms
+    env_file:
+      - .env
+    ports:
+      - "${RABBITMQ_PORT}:${RABBITMQ_PORT}"
+      - "${RABBITMQ_UI_PORT}:${RABBITMQ_UI_PORT}"
+    environment:
+      RABBITMQ_DEFAULT_USER: "${RABBITMQ_USER}"
+      RABBITMQ_DEFAULR_PASS: "${RABBITMQ_PASS}"
+    healthcheck:
+      test: "exit 0"
+
+  db:
+    image: postgres:15.3-bullseye
+    container_name: csms-db
+    volumes:
+      - ./data/postgres:/data
+    env_file:
+      - .env
+    ports:
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    environment:
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      POSTGRES_DB: "${POTGRES_DB}"
+      PGDATA: "/data"
+    healthcheck:
+      test: "exit 0"
+
+  manager:
+    container_name: csms-manager
+    build: .
+    volumes:
+      - ./src:/usr/src/csms
+    env_file:
+      - .env
+    ports:
+      - "${HTTP_SERVER_PORT}:${HTTP_SERVER_PORT}"
+    restart: always
+    command: python ./loop.py
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+
+  charge_point_node:
+    container_name: charge_point_node
+    build: .
+    volumes:
+      - ./src:/usr/src/csms
+    ports:
+      - "${WS_SERVER_PORT}:${WS_SERVER_PORT}"
+    env_file:
+      - .env
+    command: python ./loop.py
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
