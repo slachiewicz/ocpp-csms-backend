@@ -17,7 +17,7 @@ services:
       - "${RABBITMQ_UI_PORT}:${RABBITMQ_UI_PORT}"
     environment:
       RABBITMQ_DEFAULT_USER: "${RABBITMQ_USER}"
-      RABBITMQ_DEFAULR_PASS: "${RABBITMQ_PASS}"
+      RABBITMQ_DEFAULT_PASS: "${RABBITMQ_PASS}"
     healthcheck:
       test: "exit 0"
 
@@ -48,7 +48,7 @@ services:
     ports:
       - "${HTTP_SERVER_PORT}:${HTTP_SERVER_PORT}"
     restart: always
-    command: python ./loop.py
+    command: python -m http.server -b 0.0.0.0 ${HTTP_SERVER_PORT}
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -64,7 +64,7 @@ services:
       - "${WS_SERVER_PORT}:${WS_SERVER_PORT}"
     env_file:
       - .env
-    command: python ./loop.py
+    command: python -m http.server
     depends_on:
       rabbitmq:
         condition: service_healthy
