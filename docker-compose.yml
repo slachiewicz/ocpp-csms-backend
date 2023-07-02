@@ -48,7 +48,7 @@ services:
     ports:
       - "${HTTP_SERVER_PORT}:${HTTP_SERVER_PORT}"
     restart: always
-    command: python -m http.server -b 0.0.0.0 ${HTTP_SERVER_PORT}
+    command: uvicorn manager.main:app --host 0.0.0.0 --port ${HTTP_SERVER_PORT} --reload
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -64,7 +64,7 @@ services:
       - "${WS_SERVER_PORT}:${WS_SERVER_PORT}"
     env_file:
       - .env
-    command: python -m http.server
+    command: watchmedo auto-restart --pattern "*.py" --recursive --signal SIGTERM python charge_point_node/main.py
     depends_on:
       rabbitmq:
         condition: service_healthy

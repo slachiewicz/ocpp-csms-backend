@@ -1,3 +1,5 @@
 .env
-./data
+data
 .idea
+*.log
+__pycache__

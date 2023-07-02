@@ -6,4 +6,5 @@ RUN mkdir -p /usr/src/csms
 WORKDIR /usr/src/csms
 
 COPY ./src /usr/src/csms
+ENV PYTHONPATH=/usr/src/csms
 RUN pip install --no-cache-dir -r /usr/src/csms/requirements.txt
