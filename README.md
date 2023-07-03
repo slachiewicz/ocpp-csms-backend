@@ -12,7 +12,7 @@ The responsibility of the management system is the business logic (such as permi
 payments, etc).
 It knows nothing about how the charge point service works.
 
-The both parts interact with each other through the queue and durable AMQP protocol.
+Both parts interact with each other through the queue and durable AMQP protocol.
 The advantage of the approach is high scalability. Say, we have a few hundred physical charging stations.
 It would be pretty complex and expensive to serve so many connections by a single server.
 We would want to have a way to scale the application and scale without rebooting. With the provided approach,  
@@ -35,16 +35,12 @@ Stack: python3.11, FastAPI, Rabbitmq, Postgresql, Sqlachemy, MongoDB, Docker, Do
 
 ![Screenshot](https://github.com/heroyooki/ocpp-csms/assets/17108549/4ab76f0c-07b4-4d7d-a7a3-06573bfc2199)
 
-#### Local deployment flow
+##### Local deployment flow
+- execute: ```$ cp .env.example .env```
+- fill the `.env` file
+- execute: ```$ docker-compose up --build```
 
-##### - `$ cp .env.example > .env`
-
-##### - fill the `.env` file
-
-##### - `$ docker-compose up --build`
-
-#### Checking result
-
-##### - establish new ws connection with `ws://localhost:{port}/{string}` and watch the logs.
+##### Checking result
+- establish new ws connection with `ws://localhost:{port}/{string}` and watch the logs.
 
 
