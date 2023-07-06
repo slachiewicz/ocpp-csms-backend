@@ -11,7 +11,7 @@ from sse import observer as obs
 class Publisher:
     observers: List[obs.Observer] = []
 
-    async def enrich_observer(self, observer: obs.Observer, event: BaseEvent) -> None:
+    async def notify_observer(self, observer: obs.Observer, event: BaseEvent) -> None:
         await observer.gain_event(event)
 
     async def ensure_observers(self) -> None:
@@ -36,7 +36,7 @@ class Publisher:
             event = await func(*args, **kwargs)
             if event.name in settings.ALLOWED_SSE_EVENTS:
                 for observer in self.observers:
-                    await self.enrich_observer(observer, event)
+                    await self.notify_observer(observer, event)
 
         return wrapper
 
