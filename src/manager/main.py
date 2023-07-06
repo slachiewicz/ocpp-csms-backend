@@ -6,6 +6,7 @@ from core.queue.consumer import start_consume
 from core.settings import EVENTS_QUEUE_NAME
 from manager.controllers.status import status_router
 from manager.services.events import process_event
+from sse.controllers import stream_router
 
 app = FastAPI()
 
@@ -18,3 +19,4 @@ async def startup():
 
 
 app.include_router(status_router)
+app.include_router(stream_router)
