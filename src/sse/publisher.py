@@ -11,7 +11,9 @@ from sse.views import Redactor
 
 class Publisher:
     observers: List[obs.Observer] = []
-    redactor: Redactor = Redactor()
+
+    def __init__(self, redactor: Redactor):
+        self.redactor = redactor
 
     async def notify_observer(self, observer: obs.Observer, event: BaseEvent) -> None:
         await observer.gain_event(
