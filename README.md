@@ -36,11 +36,15 @@ Stack: python3.11, FastAPI, Rabbitmq, Postgresql, Sqlachemy, MongoDB, Docker, Do
 ![Screenshot](https://github.com/heroyooki/ocpp-csms/assets/17108549/4ab76f0c-07b4-4d7d-a7a3-06573bfc2199)
 
 ##### Local deployment flow
+
 - execute: ```$ cp .env.example .env```
 - fill the `.env` file
 - execute: ```$ docker-compose up --build```
 
 ##### Checking result
-- establish new ws connection with `ws://localhost:{port}/{string}` and watch the logs.
+
+- open browser by ```http://localhost:{WS_SERVER_PORT}/{string}```
+- establish new ws connection with `ws://localhost:{port}/{string}`
+- gain a server side event in the browser
 
 

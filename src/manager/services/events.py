@@ -8,7 +8,7 @@ from charge_point_node.models.base import BaseEvent
 from charge_point_node.models.on_connection import OnConnectionEvent
 from manager.fields import ChargePointStatus
 from manager.services.charge_points import update_charge_point_status
-from sse.controllers import sse_publisher
+from sse import sse_publisher
 
 
 @sse_publisher.publish

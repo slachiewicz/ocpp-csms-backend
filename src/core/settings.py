@@ -2,6 +2,8 @@ import os
 
 from loguru import logger
 
+from charge_point_node.fields import EventName
+
 DEBUG = os.environ.get("DEBUG") == "1"
 
 RABBITMQ_PORT = os.environ["RABBITMQ_PORT"]
@@ -24,3 +26,7 @@ WS_SERVER_PORT = int(os.environ["WS_SERVER_PORT"])
 
 EVENTS_QUEUE_NAME = os.environ["EVENTS_QUEUE_NAME"]
 TASKS_QUEUE_NAME = os.environ["TASKS_QUEUE_NAME"]
+
+ALLOWED_SSE_EVENTS = [
+    EventName.NEW_CONNECTION
+]
