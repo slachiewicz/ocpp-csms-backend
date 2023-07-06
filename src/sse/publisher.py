@@ -32,7 +32,7 @@ class Publisher:
             event = await func(*args, **kwargs)
             if event.name in settings.ALLOWED_SSE_EVENTS:
                 for observer in self.observers:
-                    await observer.put(event)
+                    await observer.enrich_with(event)
 
         return wrapper
 
