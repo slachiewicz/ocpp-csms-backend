@@ -12,10 +12,15 @@ class OnConnectionMetaData(BaseModel):
     entire_online_count: int
 
 
+class BootNotificationMetaData(BaseModel):
+    last_health: str
+
+
 class BaseData(BaseModel):
     charge_point_id: str
     name: str
-    meta: Dict
+    meta: OnConnectionMetaData | \
+          BootNotificationMetaData
 
 
 class BaseSSE(BaseModel):
@@ -34,7 +39,7 @@ class Redactor:
         ##################################
         return OnConnectionMetaData(
             entire_online_count=entire_online_count
-        ).dict()
+        )
 
     async def prepare_event(self, event: BaseEvent) -> Dict:
         meta = {}
