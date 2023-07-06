@@ -16,7 +16,13 @@ stream_router = APIRouter(tags=["stream"])
 
 
 class Publisher:
-    observers: List[asyncio.Queue] = []
+    observers: List["Observer"] = []
+
+    async def ensure_observers(self):
+        for observer in self.observers:
+            if await observer.request.is_disconnected():
+                self.observers.remove(observer)
+                del observer
 
     def publish(self, func) -> Callable:
         @wraps(func)
@@ -28,10 +34,12 @@ class Publisher:
 
         return wrapper
 
-    async def add_observer(self, observer: asyncio.Queue) -> None:
+    async def add_observer(self, observer: "Observer") -> None:
+        # Care about disconnected observers
+        await self.ensure_observers()
         self.observers.append(observer)
 
-    async def remove_observer(self, observer: asyncio.Queue) -> None:
+    async def remove_observer(self, observer: "Observer") -> None:
         self.observers.remove(observer)
 
 
@@ -40,6 +48,10 @@ sse_publisher = Publisher()
 
 class Observer(asyncio.Queue):
 
+    def __init__(self, request, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.request: Request = request
+
     async def subscribe(self, publisher: Publisher) -> None:
         await publisher.add_observer(self)
 
@@ -47,24 +59,20 @@ class Observer(asyncio.Queue):
         await publisher.remove_observer(self)
 
 
-async def event_generator(request: Request, observer: Observer, sse_publisher: Publisher):
+async def event_generator(observer: Observer):
     WATCHING_DELAY = 0.5  # second
 
     while True:
-        if await request.is_disconnected():
-            await observer.unsubscribe(sse_publisher)
-            del observer
-
         event = await observer.get()
-        if event:
+        if event is not None:
             yield event
         await asyncio.sleep(WATCHING_DELAY)
 
 
 @stream_router.get('/stream')
 async def stream(request: Request):
-    observer = Observer()
+    observer = Observer(request)
     await observer.subscribe(sse_publisher)
     return EventSourceResponse(
-        event_generator(request, observer, sse_publisher)
+        event_generator(observer)
     )
