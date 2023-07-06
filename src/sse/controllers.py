@@ -14,7 +14,7 @@ async def event_generator(observer: Observer):
     delay = 0.5  # seconds
 
     while True:
-        event = await observer.get()
+        event = await observer.consume_event()
         if event is not None:
             yield event
         await asyncio.sleep(delay)
@@ -24,7 +24,7 @@ async def event_generator(observer: Observer):
 async def stream(request: Request):
     observer = Observer(request)
     await observer.subscribe(sse_publisher)
-    
+
     return EventSourceResponse(
         event_generator(observer)
     )

@@ -3,12 +3,16 @@ from __future__ import annotations
 from functools import wraps
 from typing import List, Callable
 
+from charge_point_node.models.base import BaseEvent
 from core import settings
 from sse import observer as obs
 
 
 class Publisher:
     observers: List[obs.Observer] = []
+
+    async def enrich_observer(self, observer: obs.Observer, event: BaseEvent) -> None:
+        await observer.gain_event(event)
 
     async def ensure_observers(self) -> None:
         """
@@ -32,7 +36,7 @@ class Publisher:
             event = await func(*args, **kwargs)
             if event.name in settings.ALLOWED_SSE_EVENTS:
                 for observer in self.observers:
-                    await observer.enrich_with(event)
+                    await self.enrich_observer(observer, event)
 
         return wrapper
 

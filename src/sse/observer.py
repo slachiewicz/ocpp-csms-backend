@@ -20,5 +20,8 @@ class Observer(asyncio.Queue):
     async def unsubscribe(self, publisher: pub.Publisher) -> None:
         await publisher.remove_observer(self)
 
-    async def enrich_with(self, event: BaseEvent) -> None:
+    async def gain_event(self, event: BaseEvent) -> None:
         await self.put(event)
+
+    async def consume_event(self) -> BaseEvent:
+        return await self.get()
