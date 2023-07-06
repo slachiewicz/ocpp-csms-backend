@@ -11,9 +11,11 @@ counter = []
 
 
 class Observer(asyncio.Queue):
+    # in order to prevent memory overflow
+    max_events_count = 10
 
     def __init__(self, request, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs, maxsize=self.max_events_count)
         self.request: Request = request
 
     async def subscribe(self, publisher: pub.Publisher) -> None:
