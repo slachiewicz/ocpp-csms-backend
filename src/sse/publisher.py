@@ -6,13 +6,17 @@ from typing import List, Callable
 from charge_point_node.models.base import BaseEvent
 from core import settings
 from sse import observer as obs
+from sse.views import Redactor
 
 
 class Publisher:
     observers: List[obs.Observer] = []
+    redactor: Redactor = Redactor()
 
     async def notify_observer(self, observer: obs.Observer, event: BaseEvent) -> None:
-        await observer.gain_event(event)
+        await observer.gain_event(
+            await self.redactor.prepare_event(event)
+        )
 
     async def ensure_observers(self) -> None:
         """

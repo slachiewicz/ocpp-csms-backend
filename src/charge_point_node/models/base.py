@@ -5,5 +5,6 @@ from core.settings import EVENTS_QUEUE_NAME
 
 
 class BaseEvent(BaseModel):
+    charge_point_id: str
     name: EventName
     target_queue: str = EVENTS_QUEUE_NAME

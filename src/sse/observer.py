@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import asyncio
+from typing import Dict
 
 from starlette.requests import Request
 
-from charge_point_node.models.base import BaseEvent
 from sse import publisher as pub
+
+counter = []
 
 
 class Observer(asyncio.Queue):
@@ -20,8 +22,8 @@ class Observer(asyncio.Queue):
     async def unsubscribe(self, publisher: pub.Publisher) -> None:
         await publisher.remove_observer(self)
 
-    async def gain_event(self, event: BaseEvent) -> None:
+    async def gain_event(self, event: Dict) -> None:
         await self.put(event)
 
-    async def consume_event(self) -> BaseEvent:
+    async def consume_event(self) -> Dict:
         return await self.get()
