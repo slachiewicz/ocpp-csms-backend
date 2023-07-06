@@ -2,14 +2,27 @@ from __future__ import annotations
 
 from typing import Dict
 
-from pydantic import BaseModel
+from pydantic import BaseModel, validator, ValidationError
 
 from charge_point_node.fields import EventName
 from charge_point_node.models.base import BaseEvent
 
 
+class StatusCount(BaseModel):
+    online: int
+    offline: int
+    reserved: int
+
+    @validator("online", "offline", "reserved")
+    @classmethod
+    def greater_or_equal_to_zero(cls, value):
+        if value >= 0:
+            return value
+        raise ValidationError("The value should be equal or greater than zero.")
+
+
 class OnConnectionMetaData(BaseModel):
-    entire_online_count: int
+    count: StatusCount
 
 
 class BootNotificationMetaData(BaseModel):
@@ -33,12 +46,18 @@ counter = []
 class Redactor:
 
     async def _prepare_new_connection_event(self):
-        # TODO: temp code ################
+        # TODO: temp dummy code for a sample ################
         counter.append(1)
-        entire_online_count = len(counter)
+        online = len(counter)
+        offline = 25 - online
+        reserved = 5
         ##################################
         return OnConnectionMetaData(
-            entire_online_count=entire_online_count
+            count=StatusCount(
+                online=online,
+                offline=offline,
+                reserved=reserved
+            )
         )
 
     async def prepare_event(self, event: BaseEvent) -> Dict:
