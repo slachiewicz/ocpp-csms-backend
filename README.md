@@ -1,4 +1,4 @@
-# ocpp-csms
+# ocpp-csms (Python/FastAPI/Vue3)
 
 ## The application for monitoring and controlling electric vehicle chargers.
 
