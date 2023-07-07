@@ -38,6 +38,7 @@ class BaseData(BaseModel):
 
 class BaseSSE(BaseModel):
     data: BaseData
+    event: str = "message"
 
 
 counter = []

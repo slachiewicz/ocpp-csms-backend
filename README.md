@@ -43,8 +43,8 @@ Stack: python3.11, FastAPI, Rabbitmq, Postgresql, Sqlachemy, MongoDB, Docker, Do
 
 ##### Checking result
 
-- open browser by ```http://localhost:{WS_SERVER_PORT}/{string}```
-- establish new ws connection with `ws://localhost:{port}/{string}`
+- open browser by ```http://localhost:{HTTP_SERVER_PORT}/stream```
+- establish new ws connection with `ws://localhost:{WS_SERVER_PORT}/{charge_point_id: string}`
 - gain a server side event in the browser
 
 
