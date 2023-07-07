@@ -2,6 +2,47 @@
 
 ## The application for monitoring and controlling electric vehicle chargers.
 
+### Terms
+
+    -  "charge point node" the same as the "charge point service" on the screen
+    -  "manager" the same as the "management system" on the screen
+    -  "events" are the messages from the "charge point node" to the "manager"
+    -  "tasks" are the messages from the "manager" to the "charge point node"
+
+### How does it work
+
+#### Operations initialized by physical charging station
+
+    -  "charge point node" accepts connection from the physical charging station
+    -  "charge point node" accepts data from the physical charging station
+    -  "charge point node" prepares an "event" and puts it into the queue (see the screen)
+    -  "manager" consumes data and handle it as an "event"
+    -  "manager" has a monopoly access to the database
+    -  after an "event" has handled, the "manager" prepares "task" and puts it into the queue
+    -  "charge point node" consumes "task" and executes the one (replies to the physical charging station)
+
+#### Operations initialized by UI
+
+    -  "manager" accepts request from the UI
+    -  "manager" prepares "task" and puts it into the queue
+    -  "charge point node" consumes "task" and executes the one (sends data to the physical charging station)
+
+### Requirements:
+
+    -  docker
+    -  docker-compose
+
+### Quick start
+
+- execute: ```$ cp .env.example .env```
+- fill the `.env` file with your values
+- execute: ```$ docker-compose up --build```
+- open browser ```http://localhost:{HTTP_SERVER_PORT}/stream```
+- establish new ws connection with `ws://localhost:{WS_SERVER_PORT}/{charge_point_id: string}`
+- gain a server side event in the browser
+
+![Screenshot](https://github.com/heroyooki/ocpp-csms/assets/17108549/4ab76f0c-07b4-4d7d-a7a3-06573bfc2199)
+
 In the context of the client-server architecture, the csms is a server, the charging station is a client.
 The physical charging station establishes websocket connection and interacts with the management system.
 
@@ -32,19 +73,4 @@ as a task and puts it into the queue. All charge point services consume the task
 as described before.
 
 Stack: python3.11, FastAPI, Rabbitmq, Postgresql, Sqlachemy, MongoDB, Docker, Docker-Compose, Vue3/Vuetify3.
-
-![Screenshot](https://github.com/heroyooki/ocpp-csms/assets/17108549/4ab76f0c-07b4-4d7d-a7a3-06573bfc2199)
-
-##### Local deployment flow
-
-- execute: ```$ cp .env.example .env```
-- fill the `.env` file
-- execute: ```$ docker-compose up --build```
-
-##### Checking result
-
-- open browser by ```http://localhost:{HTTP_SERVER_PORT}/stream```
-- establish new ws connection with `ws://localhost:{WS_SERVER_PORT}/{charge_point_id: string}`
-- gain a server side event in the browser
-
 
