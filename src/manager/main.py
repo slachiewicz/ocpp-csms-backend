@@ -1,5 +1,6 @@
 import asyncio
 
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 
 from core.queue.consumer import start_consume
@@ -10,6 +11,15 @@ from sse.controllers import stream_router
 
 app = FastAPI()
 
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.on_event("startup")
 async def startup():

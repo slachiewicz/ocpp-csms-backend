@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Dict
-
 from pydantic import BaseModel, validator, ValidationError
 
 from charge_point_node.fields import EventName
@@ -9,11 +7,12 @@ from charge_point_node.models.base import BaseEvent
 
 
 class StatusCount(BaseModel):
-    online: int
+    available: int
     offline: int
     reserved: int
+    charging: int
 
-    @validator("online", "offline", "reserved")
+    @validator("available", "offline", "reserved", "charging")
     @classmethod
     def greater_or_equal_to_zero(cls, value):
         if value >= 0:
@@ -29,18 +28,19 @@ class BootNotificationMetaData(BaseModel):
     last_health: str
 
 
-class BaseData(BaseModel):
+class SSEEventData(BaseModel):
     charge_point_id: str
     name: str
     meta: OnConnectionMetaData | \
           BootNotificationMetaData
 
 
-class BaseSSE(BaseModel):
-    data: BaseData
+class SSEEvent(BaseModel):
+    data: SSEEventData
     event: str = "message"
 
 
+total_stations = 25
 counter = []
 
 
@@ -49,26 +49,28 @@ class Redactor:
     async def _prepare_new_connection_event(self):
         # TODO: temp dummy code for a sample ################
         counter.append(1)
-        online = len(counter)
-        offline = 25 - online
+        available = len(counter)
+        offline = total_stations - available
         reserved = 5
+        charging = 2
         ##################################
         return OnConnectionMetaData(
             count=StatusCount(
-                online=online,
+                available=available,
                 offline=offline,
-                reserved=reserved
+                reserved=reserved,
+                charging=charging
             )
         )
 
-    async def prepare_event(self, event: BaseEvent) -> Dict:
+    async def prepare_event(self, event: BaseEvent) -> SSEEvent:
         meta = {}
         if event.name is EventName.NEW_CONNECTION:
             meta = await self._prepare_new_connection_event()
 
-        data = BaseData(
+        data = SSEEventData(
             charge_point_id=event.charge_point_id,
             name=event.name.value,
             meta=meta
         )
-        return BaseSSE(data=data).dict()
+        return SSEEvent(data=data)
