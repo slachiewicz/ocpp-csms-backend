@@ -1,4 +1,8 @@
 import asyncio
+import json
+from typing import Dict
+
+from aio_pika.abc import AbstractIncomingMessage
 
 from core.queue import get_connection, get_channel
 
@@ -15,7 +19,11 @@ async def start_consume(
     await channel.set_qos(prefetch_count=prefetch_count)
     queue = await channel.declare_queue(queue_name, durable=durable)
 
-    await queue.consume(on_message)
+    async def parse_message(message: AbstractIncomingMessage) -> Dict:
+        async with message.process():
+            return await on_message(json.loads(message.body.decode()))
+
+    await queue.consume(parse_message)
 
     try:
         # Wait until terminate
