@@ -2,4 +2,7 @@ from enum import Enum
 
 
 class ChargePointStatus(str, Enum):
-    ONLINE = "online"
+    AVAILABLE = "available"
+    OFFLINE = "offline"
+    RESERVED = "reserved"
+    CHARGING = "charging"

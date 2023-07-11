@@ -12,6 +12,15 @@ RABBITMQ_USER = os.environ["RABBITMQ_USER"]
 RABBITMQ_PASS = os.environ["RABBITMQ_PASS"]
 RABBITMQ_HOST = os.environ["RABBITMQ_HOST"]
 
+DB_NAME = os.environ["DB_NAME"]
+DB_PASSWORD = os.environ["DB_PASSWORD"]
+DB_PORT = int(os.environ["DB_PORT"])
+DB_USER = os.environ["DB_USER"]
+DB_HOST = os.environ["DB_HOST"]
+
+DATABASE_ASYNC_URL = f"postgresql+asyncpg://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}"
+DATABASE_SYNC_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}"
+
 logger.add(
     "csms.log",
     enqueue=True,
@@ -30,3 +39,5 @@ TASKS_QUEUE_NAME = os.environ["TASKS_QUEUE_NAME"]
 ALLOWED_SERVER_SIDE_EVENTS = [
     EventName.NEW_CONNECTION
 ]
+
+DATETIME_FORMAT = "YYYY-MM-DD HH:mm:ss"
