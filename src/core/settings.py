@@ -33,6 +33,9 @@ logger.add(
 
 WS_SERVER_PORT = int(os.environ["WS_SERVER_PORT"])
 
+HTTP_SERVER_HOST = os.environ["HTTP_SERVER_HOST"]
+HTTP_SERVER_PORT = int(os.environ["HTTP_SERVER_PORT"])
+
 EVENTS_QUEUE_NAME = os.environ["EVENTS_QUEUE_NAME"]
 TASKS_QUEUE_NAME = os.environ["TASKS_QUEUE_NAME"]
 

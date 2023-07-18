@@ -40,7 +40,7 @@ class SSEEvent(BaseModel):
     event: str = "message"
 
 
-total_stations = 25
+total_stations = 2
 counter = []
 
 
@@ -51,8 +51,9 @@ class Redactor:
         counter.append(1)
         available = len(counter)
         offline = total_stations - available
-        reserved = 5
-        charging = 2
+        reserved = 0
+        charging = 0
+        
         ##################################
         return OnConnectionMetaData(
             count=StatusCount(

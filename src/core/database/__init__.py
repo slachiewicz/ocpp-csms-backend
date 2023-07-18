@@ -1,3 +1,4 @@
+from contextlib import asynccontextmanager
 from uuid import uuid4
 
 import arrow
@@ -14,6 +15,7 @@ engine = create_async_engine(settings.DATABASE_ASYNC_URL, echo=True)
 asession = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 
+@asynccontextmanager
 async def get_session() -> AsyncSession:
     async with asession() as session:
         yield session
