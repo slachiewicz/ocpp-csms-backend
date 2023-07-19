@@ -29,5 +29,5 @@ class Model(Base):
 
     id = Column(String, primary_key=True, index=True, default=lambda: str(uuid4()))
     created_at = Column(DateTime, default=lambda: arrow.utcnow().datetime)
-    updated_at = Column(DateTime, onupdate=lambda: arrow.utcnow().datetime, nullable=True)
+    updated_at = Column(DateTime, onupdate=lambda: arrow.utcnow().datetime.replace(tzinfo=None), nullable=True)
     is_active = Column(Boolean, default=True)

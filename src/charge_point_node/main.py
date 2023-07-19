@@ -3,7 +3,7 @@ import asyncio
 import websockets
 from loguru import logger
 
-from charge_point_node.models.on_connection import OnConnectionEvent
+from charge_point_node.models.on_connection import OnConnectionEvent, LostConnectionEvent
 from charge_point_node.protocols import OCPPWebSocketServerProtocol
 from charge_point_node.services.tasks import process_task
 from core.queue.consumer import start_consume
@@ -21,8 +21,20 @@ async def on_connect(connection: OCPPWebSocketServerProtocol, path: str):
         charge_point_id=charge_point_id
     )
     await publish(event.json(), to=event.target_queue)
+
     while True:
-        await asyncio.sleep(10)
+        if connection.closed:
+            break
+        await asyncio.sleep(3)
+
+    logger.info(
+        f"Closed connection (charge_point_id={charge_point_id})")
+    event = LostConnectionEvent(
+        charge_point_id=charge_point_id
+    )
+    await publish(event.json(), to=event.target_queue)
+
+    raise asyncio.CancelledError
 
 
 async def main():
