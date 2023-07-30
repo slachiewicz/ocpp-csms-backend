@@ -1,4 +1,5 @@
 from typing import Dict
+import asyncio
 
 from loguru import logger
 from sqlalchemy import select, update, text
@@ -7,6 +8,13 @@ from core.database import get_session
 from manager.fields import ChargePointStatus
 from manager.models.charge_point import ChargePoint
 from manager.views.charge_points import ChargePointCommonView
+
+
+async def list_charge_points():
+    async with get_session() as session:
+        result = await session.execute(select(ChargePoint))
+        await asyncio.sleep(2)
+        return result.scalars().fetchall()
 
 
 async def get_charge_point(charge_point_id) -> ChargePoint | None:
@@ -43,4 +51,5 @@ async def get_statuses_counts() -> Dict:
     async with get_session() as session:
         result = await session.execute(text(query))
         data = result.fetchone()
+        await asyncio.sleep(2)
         return {item: getattr(data, item) for item in mapper.values()}

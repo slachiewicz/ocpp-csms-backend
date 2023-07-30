@@ -1,25 +1,12 @@
 from __future__ import annotations
 
 from loguru import logger
-from pydantic import BaseModel, validator, ValidationError
+from pydantic import BaseModel
 
 import manager.services.charge_points as service
 from charge_point_node.fields import EventName
 from charge_point_node.models.base import BaseEvent
-
-
-class StatusCount(BaseModel):
-    available: int
-    offline: int
-    reserved: int
-    charging: int
-
-    @validator("available", "offline", "reserved", "charging")
-    @classmethod
-    def greater_or_equal_to_zero(cls, value):
-        if value >= 0:
-            return value
-        raise ValidationError("The value should be equal or greater than zero.")
+from manager.views.charge_points import StatusCount
 
 
 class ConnectionMetaData(BaseModel):
