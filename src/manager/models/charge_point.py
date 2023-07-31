@@ -23,7 +23,7 @@ class ChargePoint(Model):
     password = Column(String, nullable=False)
 
     location_id = Column(String, ForeignKey("locations.id", ondelete="CASCADE"), nullable=False)
-    location = relationship(Location, back_populates="charge_points")
+    location = relationship(Location, back_populates="charge_points", lazy='subquery')
 
 
 class AuthData(BaseModel):

@@ -5,6 +5,7 @@ from datetime import datetime
 from pydantic import BaseModel
 
 from manager.fields import ChargePointStatus
+from manager.views.locations import SimpleLocation
 
 
 class ChargePointCommonView(BaseModel):
@@ -28,6 +29,7 @@ class SimpleChargePoint(BaseModel):
     status: ChargePointStatus
     model: str
     updated_at: datetime | None = None
+    location: SimpleLocation
 
     class Config:
         orm_mode = True
