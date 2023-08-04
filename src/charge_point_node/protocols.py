@@ -20,6 +20,7 @@ class OCPPWebSocketServerProtocol(WebSocketServerProtocol):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.logger = logger
+        self.charge_point_id = None
 
     async def extract_charge_point_id(self, path: str) -> str:
         return path.split("/")[-1].strip("/")
@@ -67,14 +68,14 @@ class OCPPWebSocketServerProtocol(WebSocketServerProtocol):
         :param headers:
         :return:
         """
-        charge_point_id = await self.extract_charge_point_id(path)
-        password = await self._extract_password(charge_point_id, headers)
+        self.charge_point_id = await self.extract_charge_point_id(path)
+        password = await self._extract_password(self.charge_point_id, headers)
 
         if not password:
             response_status = HTTPStatus.UNAUTHORIZED
         else:
             response = await api_client.post(
-                f"charge_points/{charge_point_id}",
+                f"charge_points/{self.charge_point_id}",
                 data=ChargePointAuthView(password=password)
             )
             response_status = HTTPStatus(response.status_code)

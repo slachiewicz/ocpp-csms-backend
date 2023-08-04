@@ -2,12 +2,15 @@ from typing import List
 
 from fastapi import APIRouter, HTTPException, status
 
+from core.queue.publisher import publish
 from manager.auth.charge_points import is_relevant_password
 from manager.models.charge_point import AuthData
+from manager.models.tasks.connections import DisconnectTask
 from manager.services.charge_points import (
     get_charge_point,
     get_statuses_counts, list_charge_points
 )
+from manager.utils import acquire_lock
 from manager.views.charge_points import StatusCount, SimpleChargePoint
 
 charge_points_router = APIRouter(
@@ -46,3 +49,13 @@ async def get_charge_points():
 )
 async def get_counters():
     return await get_statuses_counts()
+
+
+@charge_points_router.patch(
+    "/{charge_point_id}",
+    status_code=status.HTTP_204_NO_CONTENT
+)
+async def disconnect(charge_point_id: str):
+    await acquire_lock(charge_point_id)
+    task = DisconnectTask(charge_point_id=charge_point_id)
+    await publish(task.json(), to=task.target_queue)

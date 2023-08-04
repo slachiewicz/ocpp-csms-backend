@@ -8,6 +8,7 @@ from charge_point_node.models.base import BaseEvent
 from charge_point_node.models.on_connection import OnConnectionEvent, LostConnectionEvent
 from manager.fields import ChargePointStatus
 from manager.services.charge_points import update_charge_point
+from manager.utils import release_lock
 from manager.views.charge_points import ChargePointUpdateStatusView
 from sse import sse_publisher
 
@@ -16,7 +17,7 @@ def prepare_event(func) -> Callable:
     @wraps(func)
     async def wrapper(data):
         event = {
-            EventName.NEW_CONNECTION.value: OnConnectionEvent,
+            EventName.NEW_CONNECTION: OnConnectionEvent,
             EventName.LOST_CONNECTION: LostConnectionEvent
         }[data["name"]](**data)
         return await func(event)
@@ -43,4 +44,5 @@ async def process_event(event: BaseEvent) -> BaseEvent:
         )
         logger.info(f"Completed process event={event}")
 
-        return event
+    await release_lock(event.charge_point_id)
+    return event

@@ -2,7 +2,7 @@ from enum import Enum
 
 
 class TaskName(str, Enum):
-    pass
+    DISCONNECT = "disconnect"
 
 
 class ChargePointStatus(str, Enum):

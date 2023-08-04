@@ -12,7 +12,7 @@ from core.settings import WS_SERVER_PORT, TASKS_QUEUE_NAME
 
 
 async def on_connect(connection: OCPPWebSocketServerProtocol, path: str):
-    charge_point_id = await connection.extract_charge_point_id(path)
+    charge_point_id = connection.charge_point_id
     logger.info(
         f"New charge point connected "
         f"(charge_point_id={charge_point_id})"
