@@ -37,12 +37,11 @@
 - execute: ```$ cp .env.example .env```
 - fill the `.env` file with your values
 - execute: ```$ docker-compose up --build```
-- open browser ```http://localhost:{HTTP_SERVER_PORT}/stream```
-- establish new ws connection with `ws://localhost:{WS_SERVER_PORT}/{charge_point_id: string}`
-- gain a server side event in the browser
 
 ### Apply your own "managers" models
+
 If you want to apply your own models, follow these steps:
+
 - describe your models with fields in the `manager/models.py` module
 - run `docker exec -it csms-manager bash` (you shall have running containers)
 - creating migrations:
