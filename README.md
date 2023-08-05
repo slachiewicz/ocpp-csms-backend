@@ -38,20 +38,6 @@
 - fill the `.env` file with your values
 - execute: ```$ docker-compose up --build```
 
-### Apply your own "managers" models
-
-If you want to apply your own models, follow these steps:
-
-- describe your models with fields in the `manager/models.py` module
-- run `docker exec -it csms-manager bash` (you shall have running containers)
-- creating migrations:
-    - `alembic revision --autogenerate -m <arbitrary_migration_name> --rev-id <arbitrary_id> --version-path manager/migrations`
-- apply migrations:
-    - `alembic upgrade heads`
-- check if migration applied:
-    - `psql "postgresql://<username>:<password>@localhost:5432/<db_name>"`
-    - `\d`, `\d <your_table>` and see your model in the output
-
 ![Screenshot](https://github.com/heroyooki/ocpp-csms/assets/17108549/4ab76f0c-07b4-4d7d-a7a3-06573bfc2199)
 
 In the context of the client-server architecture, the csms is a server, the charging station is a client.
