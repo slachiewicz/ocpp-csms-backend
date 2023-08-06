@@ -22,7 +22,7 @@ async def on_connect(connection: OCPPWebSocketServerProtocol, path: str):
     event = OnConnectionEvent(
         charge_point_id=charge_point_id
     )
-    await publish(event.json(), to=event.target_queue)
+    await publish(event.json(), to=event.target_queue, priority=event.priority)
 
     while True:
         if connection.closed:
@@ -34,7 +34,7 @@ async def on_connect(connection: OCPPWebSocketServerProtocol, path: str):
     event = LostConnectionEvent(
         charge_point_id=charge_point_id
     )
-    await publish(event.json(), to=event.target_queue)
+    await publish(event.json(), to=event.target_queue, priority=event.priority)
 
     raise asyncio.CancelledError
 
@@ -54,7 +54,7 @@ async def main():
             on_message=lambda data: process_task(data, server))
     )
     background_tasks.add(task)
-    
+
     await server.wait_closed()
 
 
