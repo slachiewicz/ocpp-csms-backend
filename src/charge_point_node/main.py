@@ -10,6 +10,8 @@ from core.queue.consumer import start_consume
 from core.queue.publisher import publish
 from core.settings import WS_SERVER_PORT, TASKS_QUEUE_NAME
 
+background_tasks = set()
+
 
 async def on_connect(connection: OCPPWebSocketServerProtocol, path: str):
     charge_point_id = connection.charge_point_id
@@ -44,11 +46,15 @@ async def main():
         WS_SERVER_PORT,
         create_protocol=OCPPWebSocketServerProtocol
     )
-    asyncio.ensure_future(
+    # Save a reference to the result of this function, to avoid a task disappearing mid-execution.
+    # The event loop only keeps weak references to tasks.
+    task = asyncio.create_task(
         start_consume(
             TASKS_QUEUE_NAME,
             on_message=lambda data: process_task(data, server))
     )
+    background_tasks.add(task)
+    
     await server.wait_closed()
 
 

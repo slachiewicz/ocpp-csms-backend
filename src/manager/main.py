@@ -22,12 +22,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+background_tasks = set()
+
 
 @app.on_event("startup")
 async def startup():
-    asyncio.ensure_future(
+    # Save a reference to the result of this function, to avoid a task disappearing mid-execution.
+    # The event loop only keeps weak references to tasks.
+    task = asyncio.create_task(
         start_consume(queue_name=EVENTS_QUEUE_NAME, on_message=process_event)
     )
+    background_tasks.add(task)
 
 
 app.include_router(status_router)
