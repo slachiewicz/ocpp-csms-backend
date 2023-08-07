@@ -2,6 +2,8 @@
 
 ## The application for monitoring and controlling electric vehicle chargers.
 
+### The whole development process [on my YouTube channel](https://www.youtube.com/@user-ni4vw6yw8b/videos)
+
 ### Terms
 
     -  "charge point node" the same as the "charge point service" on the screen
@@ -39,6 +41,8 @@
 - execute: ```$ docker-compose up --build```
 
 ![Screenshot](https://github.com/heroyooki/ocpp-csms/assets/17108549/4ab76f0c-07b4-4d7d-a7a3-06573bfc2199)
+
+Also, explained [in the video](https://www.youtube.com/watch?v=CLE70pABi_U&ab_channel=%D0%94%D0%B5%D0%BD%D0%B8%D1%813)
 
 In the context of the client-server architecture, the csms is a server, the charging station is a client.
 The physical charging station establishes websocket connection and interacts with the management system.
