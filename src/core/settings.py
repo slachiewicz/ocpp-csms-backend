@@ -3,6 +3,7 @@ from __future__ import annotations
 import os
 
 from loguru import logger
+from ocpp.v201.enums import Action
 
 from core.fields import ActionName
 
@@ -45,7 +46,8 @@ HTTP_SERVER_PORT = int(os.environ["HTTP_SERVER_PORT"])
 
 ALLOWED_SERVER_SIDE_EVENTS = [
     ActionName.NEW_CONNECTION,
-    ActionName.LOST_CONNECTION
+    ActionName.LOST_CONNECTION,
+    Action.Heartbeat
 ]
 
 DATETIME_FORMAT = "YYYY-MM-DD HH:mm:ss"

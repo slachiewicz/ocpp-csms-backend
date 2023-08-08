@@ -19,11 +19,13 @@ background_tasks = set()
 router = Router()
 
 
-async def watch(connection):
+async def watch(connection: OCPPWebSocketServerProtocol):
     while True:
-        if connection.closed:
-            return
-        raw_msg = await connection.recv()
+
+        try:
+            raw_msg = await connection.recv()
+        except Exception:
+            break
 
         try:
             msg = unpack(raw_msg)
@@ -53,7 +55,6 @@ async def on_connect(connection: OCPPWebSocketServerProtocol, path: str):
     logger.info(f"Closed connection (charge_point_id={charge_point_id})")
     event = LostConnectionEvent(charge_point_id=charge_point_id)
     await publish(event.json(), to=event.target_queue, priority=event.priority)
-    raise asyncio.CancelledError
 
 
 async def main():

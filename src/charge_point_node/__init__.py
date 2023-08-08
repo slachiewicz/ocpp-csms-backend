@@ -1,1 +1,2 @@
 from charge_point_node.services import boot_notification
+from charge_point_node.services import heartbeat

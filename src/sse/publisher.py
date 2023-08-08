@@ -3,6 +3,8 @@ from __future__ import annotations
 from functools import wraps
 from typing import List, Callable
 
+from loguru import logger
+
 from charge_point_node.models.base import BaseEvent
 from core import settings
 from sse import observer as obs
@@ -41,6 +43,7 @@ class Publisher:
         async def wrapper(*args, **kwargs):
             event = await func(*args, **kwargs)
             if event and event.action in settings.ALLOWED_SERVER_SIDE_EVENTS:
+                logger.info(f"Start sending sse (event={event})")
                 for observer in self.observers:
                     await self.notify_observer(observer, event)
 

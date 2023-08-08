@@ -16,7 +16,7 @@ class ConnectionMetaData(BaseModel):
 class SSEEventData(BaseModel):
     charge_point_id: str
     name: str
-    meta: ConnectionMetaData
+    meta: dict
 
 
 class SSEEvent(BaseModel):
@@ -34,7 +34,7 @@ class Redactor:
             counts = await service.get_statuses_counts()
             meta = ConnectionMetaData(
                 count=StatusCount(**counts)
-            )
+            ).dict()
 
         data = SSEEventData(
             charge_point_id=event.charge_point_id,

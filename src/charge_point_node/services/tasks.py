@@ -12,6 +12,7 @@ from core.fields import ActionName
 from manager.models.tasks.base import BaseTask
 from manager.models.tasks.boot_notification import BootNotificationTask
 from manager.models.tasks.connections import DisconnectTask
+from manager.models.tasks.heartbeat import HeartbeatTask
 
 router = Router()
 
@@ -21,7 +22,8 @@ def prepare_task(func) -> Callable:
     async def wrapper(data, *args, **kwargs):
         task = {
             ActionName.DISCONNECT: DisconnectTask,
-            Action.BootNotification: BootNotificationTask
+            Action.BootNotification: BootNotificationTask,
+            Action.Heartbeat: HeartbeatTask
         }[data["action"]](**data)
         return await func(task, *args, **kwargs)
 
