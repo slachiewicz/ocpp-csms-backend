@@ -1,8 +1,10 @@
+from __future__ import annotations
+
 import os
 
 from loguru import logger
 
-from charge_point_node.fields import EventName
+from core.fields import ActionName
 
 DEBUG = os.environ.get("DEBUG") == "1"
 
@@ -42,9 +44,12 @@ HTTP_SERVER_HOST = os.environ["HTTP_SERVER_HOST"]
 HTTP_SERVER_PORT = int(os.environ["HTTP_SERVER_PORT"])
 
 ALLOWED_SERVER_SIDE_EVENTS = [
-    EventName.NEW_CONNECTION,
-    EventName.LOST_CONNECTION
+    ActionName.NEW_CONNECTION,
+    ActionName.LOST_CONNECTION
 ]
 
 DATETIME_FORMAT = "YYYY-MM-DD HH:mm:ss"
+UTC_DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
 LOCK_FOLDER = "/tmp/lock"
+
+OCPP_VERSION = "2.0.1"

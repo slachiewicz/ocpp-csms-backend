@@ -3,7 +3,7 @@ from sqlalchemy import Column, String, Enum, DateTime, ForeignKey, Numeric
 from sqlalchemy.orm import relationship
 
 from core.database import Model
-from manager.fields import ChargePointStatus
+from core.fields import ChargePointStatus
 from manager.models.location import Location
 
 

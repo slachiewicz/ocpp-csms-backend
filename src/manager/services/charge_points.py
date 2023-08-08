@@ -1,11 +1,11 @@
-from typing import Dict
 import asyncio
+from typing import Dict
 
 from loguru import logger
 from sqlalchemy import select, update, text
 
 from core.database import get_session
-from manager.fields import ChargePointStatus
+from core.fields import ChargePointStatus
 from manager.models.charge_point import ChargePoint
 from manager.views.charge_points import ChargePointCommonView
 

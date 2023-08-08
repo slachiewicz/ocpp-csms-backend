@@ -1,41 +1,58 @@
 import asyncio
+from traceback import format_exc
 
 import websockets
 from loguru import logger
+from ocpp.exceptions import NotSupportedError, FormatViolationError, ProtocolError, \
+    PropertyConstraintViolationError
+from ocpp.messages import unpack
 
 from charge_point_node.models.on_connection import OnConnectionEvent, LostConnectionEvent
 from charge_point_node.protocols import OCPPWebSocketServerProtocol
+from charge_point_node.router import Router
 from charge_point_node.services.tasks import process_task
 from core.queue.consumer import start_consume
 from core.queue.publisher import publish
 from core.settings import WS_SERVER_PORT, TASKS_QUEUE_NAME
 
 background_tasks = set()
+router = Router()
+
+
+async def watch(connection):
+    while True:
+        if connection.closed:
+            return
+        raw_msg = await connection.recv()
+
+        try:
+            msg = unpack(raw_msg)
+        except (FormatViolationError, ProtocolError, PropertyConstraintViolationError) as exc:
+            logger.error("Could not parse message (message=%r, details=%r)" % (raw_msg, format_exc()))
+            await connection.send({"code": "validation_failed", "details": exc.description})
+            continue
+        try:
+            await router.handle_on(connection, msg)
+        except NotSupportedError:
+            logger.error("Caught error during call handling (details=%r)" % format_exc())
+            continue
+        except Exception as error:
+            logger.error("Caught error during call handling (details=%r)" % format_exc())
+            response = msg.create_call_error(error).to_json()
+            await connection.send(response)
 
 
 async def on_connect(connection: OCPPWebSocketServerProtocol, path: str):
     charge_point_id = connection.charge_point_id
-    logger.info(
-        f"New charge point connected "
-        f"(charge_point_id={charge_point_id})"
-    )
-    event = OnConnectionEvent(
-        charge_point_id=charge_point_id
-    )
+    logger.info(f"New charge point connected (charge_point_id={charge_point_id})")
+    event = OnConnectionEvent(charge_point_id=charge_point_id)
     await publish(event.json(), to=event.target_queue, priority=event.priority)
 
-    while True:
-        if connection.closed:
-            break
-        await asyncio.sleep(3)
+    await watch(connection)
 
-    logger.info(
-        f"Closed connection (charge_point_id={charge_point_id})")
-    event = LostConnectionEvent(
-        charge_point_id=charge_point_id
-    )
+    logger.info(f"Closed connection (charge_point_id={charge_point_id})")
+    event = LostConnectionEvent(charge_point_id=charge_point_id)
     await publish(event.json(), to=event.target_queue, priority=event.priority)
-
     raise asyncio.CancelledError
 
 

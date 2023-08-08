@@ -4,7 +4,7 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
-from manager.fields import ChargePointStatus
+from core.fields import ChargePointStatus
 from manager.views.locations import SimpleLocation
 
 

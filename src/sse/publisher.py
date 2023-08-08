@@ -40,7 +40,7 @@ class Publisher:
         @wraps(func)
         async def wrapper(*args, **kwargs):
             event = await func(*args, **kwargs)
-            if event and event.name in settings.ALLOWED_SERVER_SIDE_EVENTS:
+            if event and event.action in settings.ALLOWED_SERVER_SIDE_EVENTS:
                 for observer in self.observers:
                     await self.notify_observer(observer, event)
 

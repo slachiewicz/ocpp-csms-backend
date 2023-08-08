@@ -1,10 +1,10 @@
-from charge_point_node.fields import EventName
 from charge_point_node.models.base import BaseEvent
+from core.fields import ActionName
 
 
 class OnConnectionEvent(BaseEvent):
-    name: EventName = EventName.NEW_CONNECTION
+    action: ActionName = ActionName.NEW_CONNECTION
 
 
 class LostConnectionEvent(BaseEvent):
-    name: EventName = EventName.LOST_CONNECTION
+    action: ActionName = ActionName.LOST_CONNECTION

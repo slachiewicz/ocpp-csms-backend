@@ -1,7 +1,8 @@
-from manager.fields import TaskName
+from core.fields import ActionName
 from manager.models.tasks.base import BaseTask
 
 
 class DisconnectTask(BaseTask):
     charge_point_id: str
-    name: TaskName = TaskName.DISCONNECT
+    name: ActionName = ActionName.DISCONNECT
+

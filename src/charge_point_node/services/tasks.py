@@ -4,19 +4,25 @@ from functools import wraps
 from typing import Callable
 
 from loguru import logger
+from ocpp.v201.enums import Action
 from websockets.legacy.server import WebSocketServer
 
-from manager.fields import TaskName
+from charge_point_node.router import Router
+from core.fields import ActionName
 from manager.models.tasks.base import BaseTask
+from manager.models.tasks.boot_notification import BootNotificationTask
 from manager.models.tasks.connections import DisconnectTask
+
+router = Router()
 
 
 def prepare_task(func) -> Callable:
     @wraps(func)
     async def wrapper(data, *args, **kwargs):
         task = {
-            TaskName.DISCONNECT: DisconnectTask
-        }[data["name"]](**data)
+            ActionName.DISCONNECT: DisconnectTask,
+            Action.BootNotification: BootNotificationTask
+        }[data["action"]](**data)
         return await func(task, *args, **kwargs)
 
     return wrapper
@@ -29,5 +35,9 @@ async def process_task(task: BaseTask, server: WebSocketServer) -> None:
     if not connections:
         return
     connection = connections[0]
-    if task.name is TaskName.DISCONNECT:
+
+    if task.action is ActionName.DISCONNECT:
         await connection.close()
+        return
+
+    await router.handle_out(connection, task)

@@ -4,8 +4,8 @@ from loguru import logger
 from pydantic import BaseModel
 
 import manager.services.charge_points as service
-from charge_point_node.fields import EventName
 from charge_point_node.models.base import BaseEvent
+from core.fields import ActionName
 from manager.views.charge_points import StatusCount
 
 
@@ -29,7 +29,7 @@ class Redactor:
     async def prepare_event(self, event: BaseEvent) -> SSEEvent:
         meta = {}
         # Note: there is a list ALLOWED_SERVER_SIDE_EVENTS in the settings
-        if event.name in [EventName.NEW_CONNECTION, EventName.LOST_CONNECTION]:
+        if event.action in [ActionName.NEW_CONNECTION, ActionName.LOST_CONNECTION]:
             logger.info(f"Start preparing 'connection' event = {event}")
             counts = await service.get_statuses_counts()
             meta = ConnectionMetaData(
@@ -38,7 +38,7 @@ class Redactor:
 
         data = SSEEventData(
             charge_point_id=event.charge_point_id,
-            name=event.name.value,
+            name=event.action,
             meta=meta
         )
         return SSEEvent(data=data)
