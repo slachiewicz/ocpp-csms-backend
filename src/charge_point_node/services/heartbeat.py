@@ -11,7 +11,7 @@ router = Router()
 
 
 @router.on(Action.Heartbeat)
-async def on_boot_notification(
+async def on_heartbeat(
         message_id: str,
         charge_point_id: str,
         **kwargs
