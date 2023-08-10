@@ -5,7 +5,7 @@ import asyncio
 from starlette.requests import Request
 
 from sse import publisher as pub
-from sse.views import SSEEvent
+from sse.views import SSEvent
 
 counter = []
 
@@ -24,7 +24,7 @@ class Observer(asyncio.Queue):
     async def unsubscribe(self, publisher: pub.Publisher) -> None:
         await publisher.remove_observer(self)
 
-    async def gain_event(self, event: SSEEvent) -> None:
+    async def gain_event(self, event: SSEvent) -> None:
         await self.put(event.json())
 
     async def consume_event(self) -> str:
