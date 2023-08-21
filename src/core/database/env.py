@@ -6,10 +6,9 @@ from sqlalchemy import pool
 
 from core.database import Base
 from core.settings import DATABASE_SYNC_URL
-from manager.models.charge_point import ChargePoint
-from manager.models.location import Location
+from manager.models import Location, ChargePoint, Account
 
-__all__ = [Location, ChargePoint]
+__all__ = [Location, ChargePoint, Account]
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

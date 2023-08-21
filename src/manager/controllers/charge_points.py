@@ -4,7 +4,7 @@ from fastapi import APIRouter, HTTPException, status
 
 from core.queue.publisher import publish
 from manager.auth.charge_points import is_relevant_password
-from manager.models.charge_point import AuthData
+from manager.models import AuthData
 from manager.models.tasks.connections import DisconnectTask
 from manager.services.charge_points import (
     get_charge_point,
