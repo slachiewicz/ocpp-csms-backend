@@ -1,16 +1,25 @@
 from __future__ import annotations
 
+from typing import List
+
 from pydantic import BaseModel, validator
 
 from manager.models import Location
+from manager.views import PaginationView
 
 
 class SimpleLocation(BaseModel):
     name: str
     city: str
+    address1: str
 
     class Config:
         orm_mode = True
+
+
+class PaginatedLocationsView(BaseModel):
+    items: List[SimpleLocation]
+    pagination: PaginationView
 
 
 class CreateLocationView(BaseModel):

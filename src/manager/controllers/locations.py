@@ -1,16 +1,35 @@
+from typing import Tuple
+
 from fastapi import APIRouter, status, Depends
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.database import get_session
-from manager.models import Account
+from manager.models import Account, Location
 from manager.services.accounts import get_account
 from manager.services.locations import create_location
-from manager.views.locations import SimpleLocation, CreateLocationView
+from manager.utils import params_extractor, paginate
+from manager.views.locations import (
+    SimpleLocation,
+    CreateLocationView, PaginatedLocationsView
+)
 
 locations_router = APIRouter(
     prefix="/{account_id}/locations",
     tags=["locations"]
 )
+
+
+@locations_router.get("/", status_code=status.HTTP_200_OK)
+async def list_locations(
+        account: Account = Depends(get_account),
+        params: Tuple = Depends(params_extractor)
+):
+    query = select(Location) \
+        .where(Location.account_id == account.id) \
+        .where(Location.is_active.is_(True))
+    items, pagination = await paginate(Location, query, *params)
+    return PaginatedLocationsView(items=items, pagination=pagination)
 
 
 @locations_router.post(
