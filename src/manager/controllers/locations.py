@@ -25,9 +25,13 @@ async def list_locations(
         account: Account = Depends(get_account),
         params: Tuple = Depends(params_extractor)
 ):
-    query = select(Location) \
-        .where(Location.account_id == account.id) \
-        .where(Location.is_active.is_(True))
+    criterias = [
+        Location.account_id == account.id,
+        Location.is_active.is_(True)
+    ]
+    query = select(Location)
+    for criteria in criterias:
+        query = query.where(criteria)
     items, pagination = await paginate(Location, query, *params)
     return PaginatedLocationsView(items=items, pagination=pagination)
 

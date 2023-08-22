@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import List
+from uuid import UUID
 
 from pydantic import BaseModel, validator
 
@@ -9,6 +10,7 @@ from manager.views import PaginationView
 
 
 class SimpleLocation(BaseModel):
+    id: UUID
     name: str
     city: str
     address1: str
