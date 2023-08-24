@@ -10,13 +10,6 @@ from manager.models import ChargePoint
 from manager.views.charge_points import ChargePointCommonView
 
 
-async def list_charge_points():
-    async with get_session() as session:
-        result = await session.execute(select(ChargePoint))
-        await asyncio.sleep(2)
-        return result.scalars().fetchall()
-
-
 async def get_charge_point(charge_point_id) -> ChargePoint | None:
     async with get_session() as session:
         result = await session.execute(select(ChargePoint).where(ChargePoint.id == charge_point_id))

@@ -1,4 +1,5 @@
 from typing import Tuple
+import asyncio
 
 from fastapi import APIRouter, status, Depends
 from sqlalchemy import select
@@ -33,6 +34,7 @@ async def list_locations(
     for criteria in criterias:
         query = query.where(criteria)
     items, pagination = await paginate(Location, query, *params)
+    await asyncio.sleep(2)
     return PaginatedLocationsView(items=items, pagination=pagination)
 
 

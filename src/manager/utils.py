@@ -43,14 +43,16 @@ async def paginate(
         size: int
 ) -> Tuple[List, PaginationView]:
     async with get_contextual_session() as session:
-        count = await session.execute(select(func.count(model.id)))
+        count = await session.execute(select(func.count(model.id)) \
+                                      .filter_by(is_active=True))
         query = query.limit(size).offset(size * (page - 1))
         result = await session.execute(query)
         items = result.unique().scalars().fetchall()
+
         total = count.scalar_one()
         pagination = PaginationView(
             current_page=page,
-            last_page=math.ceil(total / size),
+            last_page=math.ceil(total / size) or 1,
             total=total
         )
         return items, pagination
