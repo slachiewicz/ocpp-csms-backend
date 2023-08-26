@@ -33,7 +33,7 @@ class Location(Model):
                                  back_populates="location",
                                  lazy="joined")
     account_id = Column(String, ForeignKey("accounts.id", ondelete="CASCADE"), nullable=False)
-    account = relationship("Account", back_populates="locations", lazy='subquery')
+    account = relationship("Account", back_populates="locations", lazy='joined')
 
     def __repr__(self) -> str:
         return f"Location: {self.name}, {self.city}, {self.id}"
@@ -54,7 +54,10 @@ class ChargePoint(Model):
     password = Column(String, nullable=False)
 
     location_id = Column(String, ForeignKey("locations.id", ondelete="CASCADE"), nullable=False)
-    location = relationship("Location", back_populates="charge_points", lazy='subquery')
+    location = relationship("Location", back_populates="charge_points", lazy='joined')
+
+    def __repr__(self):
+        return f"ChargePoint (id={self.id}, status={self.status}, location={self.location})"
 
 
 class AuthData(BaseModel):

@@ -31,7 +31,7 @@ async def release_lock(charge_point_id: str) -> None:
 
 def params_extractor(
         page: int = Query(1, ge=1),
-        size: int = Query(15, gt=0)
+        size: int = Query(5, gt=0)
 ) -> Tuple:
     return page, size
 
@@ -46,6 +46,7 @@ async def paginate(
         count = await session.execute(select(func.count(model.id)) \
                                       .filter_by(is_active=True))
         query = query.limit(size).offset(size * (page - 1))
+
         result = await session.execute(query)
         items = result.unique().scalars().fetchall()
 
@@ -55,4 +56,5 @@ async def paginate(
             last_page=math.ceil(total / size) or 1,
             total=total
         )
+
         return items, pagination

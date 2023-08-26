@@ -1,4 +1,3 @@
-import asyncio
 from typing import Tuple
 
 from fastapi import APIRouter, HTTPException, status, Depends
@@ -50,7 +49,6 @@ async def list_charge_points(
     for criteria in criterias:
         query = query.where(criteria)
     items, pagination = await paginate(ChargePoint, query, *params)
-    await asyncio.sleep(2)
     return PaginatedChargePointsView(items=items, pagination=pagination)
 
 
